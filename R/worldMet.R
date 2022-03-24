@@ -25,6 +25,14 @@ library(lubridate)
 df$date <- ymd_hms(df$SETTLEMENTDATE)
 
 # merge the NEM NSW data and the Sydney meteorological data
+library(tidyverse)
 df_met <- left_join(df, sydney_met_half_hour, by = 'date')
 tail(df_met)
 df_met <- tail(df_met, -1)
+scatterPlot(df_met, x = "air_temp", y = "RRP", ylab = "$/MWh", xlab = "Celsius")
+
+# save file
+file <- c("NSW_Met_2021.rds")
+myPath <- file.path(wd, subdirectory, file)
+
+saveRDS(df_met, myPath)

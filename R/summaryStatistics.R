@@ -40,7 +40,7 @@ qqnorm(df3$RRP)
 
 ### Exploring the outliers
 
-# Iner-quartile range
+# Inter-quartile range
 Q <- quantile(df3$RRP, probs = c(0.25, 0.75), na.rm = FALSE)
 iqr <- IQR(df3$RRP)
 
