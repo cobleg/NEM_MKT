@@ -18,7 +18,7 @@ tail(df)
 
 # convert the time series from class 'character' to class POSIXct
 library(lubridate)
-df.1 <- data.frame(date = ymd_hms(df$SETTLEMENTDATE),  Price = df$RRP)
+df.1 <- data.frame(date = ymd_hms(df$SETTLEMENTDATE),  Price = df$RRP, Quantity = df$TOTALDEMAND)
 
 # inspect the data
 head(df.1)
@@ -45,9 +45,6 @@ df.3 <- rbind(df.1, df.2)
 head(df.3)
 tail(df.3)
 
-
-# delete the last row of the data
-df.3 <- head(df.3, -1)
 
 # Add an indicator variable (before, after) to allow subsetting
 library(dplyr)
