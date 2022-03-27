@@ -1,0 +1,134 @@
+---
+title: "NEM spot price risk factors"
+author: "Grant Coble-Neal"
+date: "`r Sys.Date()`"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(qwraps2)
+options(qwraps2_markup = "markdown")
+```
+
+```{r, include=FALSE}
+wd <- c("C:\\Users\\User\\Google Drive\\R\\NEM_MKT")
+file <- c("NEM_NSW_solar_2021_22_A.rds")
+subdirectory <- c("data")
+myPath <- file.path(wd, subdirectory, file)
+df <- readRDS(myPath)
+
+library(psych)
+describe(df)
+
+library(tidyverse)
+
+table.1 <- df %>%
+  select(Price, Quantity, Outlier_H_L) %>%
+  group_by(Outlier_H_L) %>%
+  summarise_all(funs(mean, sd))
+
+table.1 <- head(table.1, -1)
+
+
+```
+
+
+## Introduction
+
+This report presents results related to identifying the factors driving variation (i.e. risk) in spot prices in the National Electricity Market (NEM).
+
+## Outline in this report
+
+- Descriptive statistics showing the NEM spot price risk profile
+- Exploring causal factors
+- Drawing conclusions
+
+## Data collection
+Data sets were sourced from:
+
+- [Australian Electricity Market Operator](https://aemo.com.au/)
+- [National Oceanic and Atmospheric Administration via the worldMet library](https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily)
+- [NASA's Prediction of Worldwide Energy Resource (POWER)](https://power.larc.nasa.gov/data-access-viewer/)
+
+## Data notes
+
+Time frame of data collection is 1 January 2021 to 28 February 2022, inclusive. Note that prior to 1 October 2021, the NEM data are reported in 30-minute market settlement intervals. After 1 October 2021, market settlement intervals changed to 5 minutes to match the 5-minute dispatch interval. Consequently, data after 1 October 2021 are aggregated to 30-minute.
+
+NEM market data are confined to the New South Wales (NSW) region. A single weather station is used to associate variation in NEM spot price ($/MWh) and quantity (MWh) to variation in air temperature and solar irradiation.
+
+
+[Click on this link for more information about the NEM](https://aemo.com.au/-/media/Files/Electricity/NEM/National-Electricity-Market-Fact-Sheet.pdf)
+
+
+## Summary statistics
+Here is a table of the collated data set:
+```{r, message = F}
+library(kableExtra)
+kable(table.1) %>%
+  kable_styling(font_size = 10)
+```
+
+During market intervals that are within the 2.5% and the 97.5% percentile range, the spot price averages $60.73/MWh +/- $33.00/MWh and quantity averages 7,537.91 MWh +/- 1,134 MWh. Note that periods of very low prices, the average is negative and the quantity range is 5,795.48 MWh +/- 803.12 MWh. During percentile market intervals, price averages $658.29/MWh with an average range of +$1,072.17/MWh. 
+
+
+## Histogram of NEM NSW spot price
+Excluding outliers, here is a histogram of spot prices averaged over 30-minute intervals:
+
+![Histogram of spot prices excluding outliers](/Users/User/Google Drive/R/NEM_MKT/output/NEM_NSW_Price_2021_22_normal_hist.png){width=50%}
+
+## Histogram of NEM NSW spot price spikes
+NEM spot prices are prone to spikes to a minimum of -$1,000/MWh (price floor) and $15,000/MWh (price cap). Note that the histogram suggests pronounced skewness and peakiness.
+
+![Histogram of spot price outliers](/Users/User/Google Drive/R/NEM_MKT/output/NEM_NSW_Price_2021_22_outlier_hist.png){width=50%}
+
+## Probability Density Function (PDF)
+Given the observed peakiness and skewness in NEM spot prices, it is useful to relate this to a particular PDF. Here, excluding outliers, spot price variation is compared to the gamma and log-normal PDFs.
+
+![](/Users/User/Google Drive/R/NEM_MKT/output/NEM_NSW_Price_2021_22_PDF_QQ.png){width=75%}
+
+## Price versus quantity
+A scatter plot of quantity (MWh) and spot price ($/MWh) suggests a direct, albeit noisy, relationship:
+![](/Users/User/Google Drive/R/NEM_MKT/output/NEM_NSW_Price_2022_scatter_normal.png){width=75%}
+
+
+## Seasonal patterns
+Using a calendar plot, we can explore quantity variation over the whole of calendar year 2021:
+![](/Users/User/Google Drive/R/NEM_MKT/output/NEM_NSW_quantity_2021.png){width=80%}
+
+## Air temperature and quantity
+The demand for electricity suggests a seasonal cycle, which is partly influenced by seasonal air temperature variation:
+![](/Users/User/Google Drive/R/NEM_MKT/output/NEM_NSW_2021_22_AirTemp_MWh_season.png){width=80%}
+
+
+## Solar irradiance and normal demand
+Across three seasons, higher solar irradiance suggests lower spot prices:
+
+![](/Users/User/Google Drive/R/NEM_MKT/output/NEM_NSW_solar_outliers_season.png){width=80%}
+
+## Risk of spikes in through the year
+Price spikes appear to be spread across the winter months:
+
+![](/Users/User/Google Drive/R/NEM_MKT/output/NEM_NSW_Price_2021.png){width=80%}
+
+## Solar irradiance and demand during price spikes
+This chart suggests that solar irradiance contributes to low percentile spot prices, but not to high percentile spot prices:
+![](/Users/User/Google Drive/R/NEM_MKT/output/NEM_NSW_solar_price_spikes.png){width=80%}
+
+## Share of solar generation
+
+- According to the AEMO's [NEM Registration and Exemption List](https://www.aemo.com.au/-/media/files/electricity/nem/participant_information/nem-registration-and-exemption-list.xls?la=en) renewable electricity generation accounts for 55% of total generation. A relatively small proportion is solar power. However, [according to Energy NSW](https://www.energy.nsw.gov.au/renewables/renewable-generation/solar-energy), there is in excess of 4,000 MW of solar power capacity installed
+
+## Summary
+In summary:
+
+- There is wide dispersion of NEM spot prices in the NEM region
+- Air temperature and solar irradiance influences suggest a complex seasonal pattern
+- Solar irradiance suppresses quantity (MWh) notably in autumn and spring.
+- There is an association with low percentile spot prices and solar irradiance
+- Most spot price spikes appear during the winter months
+- No clear evidence of any time trend in price spikes
+
+
+
+

@@ -12,7 +12,8 @@ df <- readRDS(myPath)
 library(tidyverse)
 
 df %>% group_by(season) %>%
-  summarise(sd_price = sd(Price, na.rm=TRUE),
+  summarise(mean_price = mean(Price, na.rm=TRUE),
+            sd_price = sd(Price, na.rm=TRUE),
             iqr_price = IQR(Price, na.rm=TRUE),
             mad_price = mad(Price, na.rm=TRUE))
 
@@ -30,7 +31,20 @@ df <- df %>%
   mutate( Outlier = case_when( Price < lower_bound | Price > upper_bound ~ 'outlier',
                                Price >= lower_bound & Price <= upper_bound ~ 'normal'))
 
+df.1 <- df[, c("Price", "Quantity", "air_temp", "Outlier")]
+
+library(tangram)
+df.1 %>% group_by(Outlier) %>%
+  summarise(mean_price = mean(Price, na.rm=T),
+            sd_price = sd(Price, na.rm=T),
+            mean_quantity = mean(Price, na.rm = T),
+            sd_quantity = sd(Quantity, na.rm = T),
+            mean_temperature = mean(air_temp, na.rm=T)) %>%
+  tangram()
+
+
 library(psych)
+describe(df)
 describe(df[which(df$Outlier == "outlier"), c("Price", "Quantity") ]) # summary statistics of outliers recorded from 1 January 2021 to 28 February 2022
 
 file <- c("NEM_NSW_Price_Outlier_Risk_2021_22.png")
