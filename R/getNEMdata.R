@@ -14,7 +14,7 @@ wd <- getwd()
 filePath2 <- file.path(wd, subdirectory, paste0("NEM_", region, "_" ,year, ".rds"))
 datalist = list()
 myMonth = 1
-for (myMonth in 1:2)
+for (myMonth in 1:6)
 {
   month <- str_pad(myMonth, 2, "left", pad="0")
   file <- c(paste0(prefix, year, month, "_", region,"1.csv" ))

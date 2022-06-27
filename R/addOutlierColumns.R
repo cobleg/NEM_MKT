@@ -3,7 +3,7 @@
 # Objective: add factor variables to classify market intervals by outlier (low, high) and normal
 # Author: Grant Coble-Neal
 
-wd <- c("C:\\Users\\User\\Google Drive\\R\\NEM_MKT")
+wd <- getwd()
 file <- c("NEM_NSW_solar_2021_22.rds")
 subdirectory <- c("data")
 myPath <- file.path(wd, subdirectory, file)
