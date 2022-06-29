@@ -18,6 +18,7 @@ for (myMonth in 1:6)
 {
   month <- str_pad(myMonth, 2, "left", pad="0")
   file <- c(paste0(prefix, year, month, "_", region,"1.csv" ))
+  print(file)
   myURL <- paste0(filePath, file)
   
   df <- read.csv(myURL)
