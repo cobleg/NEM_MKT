@@ -3,10 +3,10 @@
 # Objective: explore the worldmet package. Does it have meteorological data for Australia?
 
 library(worldmet)
-#getMeta(lat = -31.95224, lon = 115.8614)
+getMeta(lat = -31.95224, lon = 115.8614)
 getMeta(lat = -33.86785, lon = 151.20732)
 
-#perth_met <- importNOAA(code = "946080-99999", year = 2021)
+perth_met <- importNOAA(code = "946080-99999", year = 2022)
 sydney_met <- importNOAA(code = "947660-99999", year = 2021)
 sydney_met.2 <- importNOAA(code = "947660-99999", year = 2022)
 
