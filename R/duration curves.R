@@ -3,6 +3,7 @@
 # Author: Grant Coble-Neal
 
 library(dplyr)
+
 library(ggplot2)
 
 Duration_Qty <- NEM_regions_data %>% 
