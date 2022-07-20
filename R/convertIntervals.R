@@ -19,7 +19,7 @@ df.2 <- data.frame(date = df.1$date_time, Price = df.1$RRP, Quantity = df.1$TOTA
 
 
 # load the 2022 data NEM_NSW_2022
-file <- c("NEM_NSW_2022.rds")
+file <- c("NEM_regions_2022.rds")
 myPath <- file.path(wd, subdirectory, file)
 df.3 <- readRDS(myPath)
 

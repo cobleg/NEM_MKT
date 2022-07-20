@@ -18,4 +18,4 @@ PDC <- function(data, region = "NSW1"){
   return(pdc)
 }
 regions <- c("NSW", "QLD", "VIC", "SA", "TAS")
-map(regions, ~PDC(NEM_regions_data, .x))
+purrr::map(regions, ~PDC(NEM_regions_data, .x))

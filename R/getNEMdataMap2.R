@@ -31,6 +31,8 @@ walk(files, print)
 
 # append files
 NEM_regions_data = do.call(rbind, df.list)
+fileName <- paste0("NEM_regions_", years, ".rds" )
+saveRDS(NEM_regions_data, file.path(wd, subdirectory, fileName))
 
 # save files
 map( filePath2, ~saveRDS(NEM_regions_data, .x) )
