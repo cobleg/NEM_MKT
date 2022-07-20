@@ -3,11 +3,11 @@
 # Objective: convert 5 minute interval data to 60 minute intervals
 # Author: Grant Coble-Neal
 
-
-
 loadData <- function(fileName = "NEM_regions_2022.rds"){
   # load the  data 
   file <- c(fileName)
+  wd <- getwd()
+  subdirectory <- "data"
   myPath <- file.path(wd, subdirectory, file)
   df <- readRDS(myPath)
   return(df)
@@ -26,7 +26,8 @@ convertInterval <- function(data = "NEM_regions_2022", intervalsPerHour = 12){
            hour = hour(SETTLEMENTDATE),
     ) %>% 
     group_by(REGION, year, month, day, hour) %>% 
-    summarise(TOTALDEMAND = sum(TOTALDEMAND)/intervalsPerHour)
+    summarise(TOTALDEMAND = sum(TOTALDEMAND)/intervalsPerHour,
+              AveragePrice = mean(RRP))
   return(df)
 }
 
