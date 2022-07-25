@@ -29,7 +29,8 @@ NEM_regions_ts1 <- df.21_22 %>%
             P25_RRP = quantile(AveragePrice), 0.25,
             P50_RRP = quantile(AveragePrice), 0.50,
             P75_RRP = quantile(AveragePrice), 0.75,
-            P95_RRP = quantile(AveragePrice), 0.95
+            P95_RRP = quantile(AveragePrice), 0.95,
+            sigma = sd(AveragePrice)
             )
 
 
