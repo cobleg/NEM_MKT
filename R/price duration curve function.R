@@ -1,6 +1,7 @@
 
 # Objective: Create a function to produce a load duration curve
 # Author: Grant Coble-Neal
+# Dependency: getNEMdataMap2.R
 
 PDC <- function(data, region = "NSW1"){
   library(dplyr)
