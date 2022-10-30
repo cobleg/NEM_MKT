@@ -1,6 +1,7 @@
 
 # Objective: create panel of intra-day plots by region
 # Author: Grant Coble-Neal
+# Dependency: convertIntervals2.R
 
 library(dplyr)
 library(ggplot2)
