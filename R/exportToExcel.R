@@ -16,6 +16,7 @@ NEM_regions <- readRDS(here("data", "NEM_regions.rds"))
 
 NEM_regions.1 <- NEM_regions %>% 
   mutate(
+    REGIONID = REGION,
     Year = lubridate::year(SETTLEMENTDATE),
     Month = lubridate::month(SETTLEMENTDATE),
     Day = lubridate::day(SETTLEMENTDATE),
@@ -25,10 +26,10 @@ NEM_regions.1 <- NEM_regions %>%
   mutate(
     DateTime = lubridate::ymd_hm(paste(sep="-", Year, Month, Day, Hour, Minutes))
   ) %>% 
-  select(REGION, DateTime, TOTALDEMAND, RRP) %>% 
-  tsibble(index = DateTime, key = REGION) %>% 
+  select(REGIONID, DateTime, TOTALDEMAND, RRP) %>% 
+  tsibble(index = DateTime, key = REGIONID) %>% 
   filter_index("2022-01-15") %>%
-  group_by(REGION) %>% 
+  group_by(REGIONID) %>% 
   mutate(
     DateTime = seq(1:length(DateTime)) - 1
   ) 
