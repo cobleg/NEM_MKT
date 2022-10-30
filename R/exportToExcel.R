@@ -27,7 +27,11 @@ NEM_regions.1 <- NEM_regions %>%
   ) %>% 
   select(REGION, DateTime, TOTALDEMAND, RRP) %>% 
   tsibble(index = DateTime, key = REGION) %>% 
-  filter_index("2022-01-15")
+  filter_index("2022-01-15") %>%
+  group_by(REGION) %>% 
+  mutate(
+    DateTime = seq(1:length(DateTime)) - 1
+  ) 
 
 desination.path <- "C:\\Users\\User\\OneDrive\\Ventity models\\NEM intraday simulation\\Data\\NEM_regions.xlsx"
 
