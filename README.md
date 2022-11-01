@@ -5,3 +5,6 @@ Analysing National Electricity Market data:
 3. Looking at time series plots to understand price volatility and operational demand patterns, espeically before and after the change to 5 minute settlement.
 
 These are not directly considering market dynamics, which reflect inter-dependencies between energy markets (i.e. electricity, gas, coal) and carbon, environmental markets.
+
+# To Do
+Create a day ahead forecast model based on temperature and standardised seasonal demand profile for each NEM region.
