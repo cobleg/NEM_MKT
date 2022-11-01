@@ -30,6 +30,8 @@ sydney_met.3 <- rbind(sydney_met, sydney_met.2)
 NEM_weather <- lubridate::ymd_hms(NEM_weather$date)
 
 # To Do: convert to 5 minute data to match NEM operational demand timeseries
+library(padr)
+
 
 # convert to 30-minute interval
 
