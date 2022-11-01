@@ -1,22 +1,33 @@
 
 
 # Objective: explore the worldmet package. Does it have meteorological data for Australia?
-
+library(tidyverse)
 library(worldmet)
-getMeta(lat = -31.95224, lon = 115.8614)
-getMeta(lat = -33.86785, lon = 151.20732)
+getMeta(lat = -31.95224, lon = 115.8614) # Perth
+getMeta(lat = -33.86785, lon = 151.20732) #Sydney
+getMeta(lat = -27.4694, lon = 153.02809) # Brisbane
+getMeta(lat = -34.906101, lon = 138.5393903) # Adelaide
+getMeta(lat = -42.87936, lon = 147.32941) # Hobart
 
+# WEM region
 perth_met <- importNOAA(code = "946080-99999", year = 2022)
+
+# NEM regions
+brisbane_met <- importNOAA(code = "945780-99999", year = 2021)
 sydney_met <- importNOAA(code = "947660-99999", year = 2021)
 sydney_met.2 <- importNOAA(code = "947660-99999", year = 2022)
+hobart_met <- importNOAA(code = "949700-99999", year = 2021)
+adelaide_met <- importNOAA(code = "946720-99999", year = 2021)
 
-# truncate rows after 28 February 2022
+NEM_weather <- dplyr::bind_rows(brisbane_met, sydney_met, hobart_met, adelaide_met)
 
 library(lubridate)
-sydney_met.2$date <- ymd_hms(sydney_met.2$date)
-sydney_met.2 <- sydney_met.2[which(sydney_met.2$date <= ymd_hms(c("2022-02-28 23:00:00"))),]
+sydney_met.2$date <- lubridate::ymd_hms(sydney_met.2$date)
+# sydney_met.2 <- sydney_met.2[which(sydney_met.2$date <= ymd_hms(c("2022-02-28 23:00:00"))),]
 
 sydney_met.3 <- rbind(sydney_met, sydney_met.2)
+
+NEM_weather <- lubridate::ymd_hms(NEM_weather$date)
 
 # convert to 30-minute interval
 
