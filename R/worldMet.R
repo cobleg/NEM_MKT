@@ -4,7 +4,8 @@
 library(tidyverse)
 library(worldmet)
 getMeta(lat = -31.95224, lon = 115.8614) # Perth
-getMeta(lat = -33.86785, lon = 151.20732) #Sydney
+getMeta(lat = -33.86785, lon = 151.20732) # Sydney
+getMeta(lat = -37.814, lon = 144.96) # Melbourne
 getMeta(lat = -27.4694, lon = 153.02809) # Brisbane
 getMeta(lat = -34.906101, lon = 138.5393903) # Adelaide
 getMeta(lat = -42.87936, lon = 147.32941) # Hobart
@@ -16,10 +17,11 @@ perth_met <- importNOAA(code = "946080-99999", year = 2022)
 brisbane_met <- importNOAA(code = "945780-99999", year = 2021)
 sydney_met <- importNOAA(code = "947660-99999", year = 2021)
 sydney_met.2 <- importNOAA(code = "947660-99999", year = 2022)
+melbourne_met <- importNOAA(code = "959360-99999", year = 2021)
 hobart_met <- importNOAA(code = "949700-99999", year = 2021)
 adelaide_met <- importNOAA(code = "946720-99999", year = 2021)
 
-NEM_weather <- dplyr::bind_rows(brisbane_met, sydney_met, hobart_met, adelaide_met)
+NEM_weather <- dplyr::bind_rows(brisbane_met, sydney_met, melbourne_met, hobart_met, adelaide_met)
 
 library(lubridate)
 sydney_met.2$date <- lubridate::ymd_hms(sydney_met.2$date)
@@ -27,11 +29,25 @@ sydney_met.2$date <- lubridate::ymd_hms(sydney_met.2$date)
 
 sydney_met.3 <- rbind(sydney_met, sydney_met.2)
 
-NEM_weather <- lubridate::ymd_hms(NEM_weather$date)
+NEM_weather$Date <- lubridate::ymd_hms(NEM_weather$date)
 
 # To Do: convert to 5 minute data to match NEM operational demand timeseries
 library(padr)
 
+NEM_weather <- NEM_weather %>% 
+  pad(by = "Date", group = "station") %>% 
+  fill_by_function(fun = mean)
+
+start.date <- min(NEM_weather$Date)
+end.date <- max(NEM_weather$Date)
+group.names <- unique(NEM_weather$station)
+
+NEM_weather.5mins <- tibble(
+  DateTime = rep(seq(from = start.date, to = end.date, by = "5 min"), each = length(group.names)),
+) %>% 
+  mutate(
+    station = rep(rep(group.names), length.out = length(DateTime))
+  )
 
 # convert to 30-minute interval
 
