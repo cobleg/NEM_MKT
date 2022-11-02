@@ -1,6 +1,13 @@
 
 
 # Objective: explore the worldmet package. Does it have meteorological data for Australia?
+# Author: Grant Coble-Neal
+# Dependencies: none
+# Outputs: 
+#         (1) NEM_weather (an hourly time series of temperature, relative humidity etc by weather station)
+#         (2) NEM_weather.5mins (a five minute time series of temperature and relative humidity by weather station)
+#         (3) sydney_met_half_hour (a half-hour weather temperature data frame for Sydney, NSW)
+
 library(tidyverse)
 library(worldmet)
 getMeta(lat = -31.95224, lon = 115.8614) # Perth
@@ -29,7 +36,7 @@ sydney_met.2$date <- lubridate::ymd_hms(sydney_met.2$date)
 
 sydney_met.3 <- rbind(sydney_met, sydney_met.2)
 
-NEM_weather$Date <- lubridate::ymd_hms(NEM_weather$date)
+NEM_weather$DateTime <- lubridate::ymd_hms(NEM_weather$date)
 
 # To Do: convert to 5 minute data to match NEM operational demand timeseries
 library(padr)
@@ -49,6 +56,11 @@ NEM_weather.5mins <- tibble(
     station = rep(rep(group.names), length.out = length(DateTime))
   )
 
+NEM_weather.5mins <- left_join(NEM_weather.5mins, NEM_weather, by = c("DateTime", "station")) %>% 
+  select(DateTime, station, air_temp, dew_point, RH) %>% 
+  pad(by = "DateTime", group = "station") %>% 
+  fill_by_function(fun = mean)
+  
 # convert to 30-minute interval
 
 sydney_met_half_hour <- timeAverage(sydney_met.3, avg.time = "30 min", fill = TRUE)
