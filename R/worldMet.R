@@ -8,6 +8,7 @@
 #         (2) NEM_weather.5mins (a five minute time series of temperature and relative humidity by weather station)
 #         (3) sydney_met_half_hour (a half-hour weather temperature data frame for Sydney, NSW)
 
+library(here)
 library(tidyverse)
 library(worldmet)
 getMeta(lat = -31.95224, lon = 115.8614) # Perth
@@ -42,11 +43,11 @@ NEM_weather$DateTime <- lubridate::ymd_hms(NEM_weather$date)
 library(padr)
 
 NEM_weather <- NEM_weather %>% 
-  pad(by = "Date", group = "station") %>% 
+  pad(by = "DateTime", group = "station") %>% 
   fill_by_function(fun = mean)
 
-start.date <- min(NEM_weather$Date)
-end.date <- max(NEM_weather$Date)
+start.date <- min(NEM_weather$DateTime)
+end.date <- max(NEM_weather$DateTime)
 group.names <- unique(NEM_weather$station)
 
 NEM_weather.5mins <- tibble(
@@ -60,6 +61,9 @@ NEM_weather.5mins <- left_join(NEM_weather.5mins, NEM_weather, by = c("DateTime"
   select(DateTime, station, air_temp, dew_point, RH) %>% 
   pad(by = "DateTime", group = "station") %>% 
   fill_by_function(fun = mean)
+
+# save the NEM_weather.5mins
+saveRDS(NEM_weather.5mins, here("data", "NEM_weather_5M_2021.rds"))
   
 # convert to 30-minute interval
 
