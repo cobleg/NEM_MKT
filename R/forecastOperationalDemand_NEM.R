@@ -19,10 +19,14 @@
 #                 (2) NEM_weather.5mins for temperature
 #                 (3) Need solar irradiance data
 
+# Notes:
+#      (1) RRP: Regional Reference Price
+
+library(feasts)
 library(here)
 library(lubridate)
-library(feasts)
 library(tidyverse)
+
 NEM_regions_2022 <- readRDS(here("data", "NEM_regions_2022.rds")) %>% 
   group_by(REGION) %>% 
   mutate(
@@ -44,31 +48,62 @@ NEM_regions_2022 <- readRDS(here("data", "NEM_regions_2022.rds")) %>%
 
 df.ts <- tsibble::tsibble(NEM_regions_2022, key = c(REGION, Season), index = DateTime)
 
+# Decompose operational demand
 df.OpDemand.decompose <- df.ts %>% 
   model(
-    feasts::STL( TOTALDEMAND)
+    feasts::STL(TOTALDEMAND)
   ) %>% 
   components(df.OpDemand.decompose) %>% 
   select(!c(.model))
 
+# Decompose the wholesale price
+df.WholesalePrice.decompose <- df.ts %>% 
+  model(
+    feasts::STL(RRP)
+  ) %>% 
+  components(df.OpDemand.decompose) %>% 
+  select(!c(.model))
+
+# Create time series charts of demand
 df.OpDemand.decompose %>% 
   autoplot(TOTALDEMAND, colour = "grey") +
   geom_line(aes(y=trend), colour = "black") +
   facet_grid(vars(REGION, Season), scales = "free_y") +
-  ggtitle("Operational Demand by region and season, 2022") +
+  ggtitle("Operational Demand by region and season  (5 minute intervals), 2022") +
   ylab("MWh")
 
 NEM_regions_2022 %>% 
   group_by(REGION, Weekday, Month, Week.Number) %>% 
   summarise(
-    WeekDay.Demand = mean(TOTALDEMAND)
+    WeekDay.Demand = mean(RRP)
   ) %>% 
   filter(Month == "Jan") %>% 
   ggplot() +
   geom_line(aes(x = Weekday, y = WeekDay.Demand )) +
   facet_wrap(~REGION) +
-  ggtitle("Daily Average Operational Demand, January 2022") +
+  ggtitle("Daily Average Operational Demand (5 minute intervals), January 2022") +
   ylab("MWh")
+
+# Create time series charts of price
+df.WholesalePrice.decompose %>% 
+  autoplot(RRP, colour = "grey") +
+  geom_line(aes(y=trend), colour = "black") +
+  facet_grid(vars(REGION, Season), scales = "free_y") +
+  ggtitle("Wholesale price by region and season  (5 minute intervals), 2022") +
+  ylab("$/MWh")
+
+NEM_regions_2022 %>% 
+  group_by(REGION, Weekday, Month, Week.Number) %>% 
+  summarise(
+    WeekDay.Demand = mean(RRP)
+  ) %>% 
+  filter(Month == "Jan") %>% 
+  ggplot() +
+  geom_line(aes(x = Weekday, y = WeekDay.Demand )) +
+  facet_wrap(~REGION) +
+  ggtitle("Daily Average Operational Demand (5 minute intervals), January 2022") +
+  ylab("$/MWh")
+
 
  NEM_regions_2022 %>% 
    group_by(REGION, Weekday, Month, Week.Number) %>%
