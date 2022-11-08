@@ -5,19 +5,22 @@
 # Dependency: convertIntervals2.R
 
 library(fpp3)
+library(here)
 library(tidyverse)
+
+source(here("R", "convertIntervals2.R"))
 
 df.21_22$Date = lubridate::ymd_h(paste(sep="-", df.21_22$year, df.21_22$month, df.21_22$day, df.21_22$hour))
 
 NEM_ts <- tsibble(df.21_22, index = Date, key = REGION) %>% 
-  filter(REGION == "NSW1", year == 2022) 
+  filter(year == 2022) 
 
 NEM_hourly_ts <- NEM_ts %>%
   pivot_longer(
     cols = c("AveragePrice", "TOTALDEMAND"),
     names_to = "Names",
     values_to = "Values") %>%
-  select(!c(REGION))
+  select(!c(REGION)) %>% 
   mutate(Names = as.factor(Names))
 
 panel_labels <- c("1" = "$/MWh", "2" = "MWh")

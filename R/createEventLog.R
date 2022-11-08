@@ -35,7 +35,17 @@ eventLog <- NEM_regions_2022 <- readRDS(here("data", "NEM_regions_2022.rds")) %>
   select(REGION, DateTime, Demand, RRP, Weekday, Month, Week.Number, Season) %>% 
   mutate(
     Event.HighPrice = case_when(
-      RRP > 5000 ~ 1,
-      TRUE ~ 0
+      RRP > 5000 ~ "Price GT $5,000/MWh",
+      TRUE ~ "Price LE $5,000/MWh"
     )
-  )
+  ) 
+
+eventLog %>% 
+  group_by(REGION, Season, Event.HighPrice) %>% 
+  summarise(
+    Price.mean = mean(RRP)
+    ) %>% 
+  tidyr::pivot_wider(names_from = Event.HighPrice, values_from = Price.mean) %>% 
+  
+  print(n=100)
+
