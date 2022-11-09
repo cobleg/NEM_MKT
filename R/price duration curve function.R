@@ -3,15 +3,20 @@
 # Author: Grant Coble-Neal
 # Dependency: getNEMdataMap2.R
 
-PDC <- function(data, region = "NSW1"){
+library(here)
+
+source(here("R", "getNEMdataMap2.R"))
+
+PDC <- function(data = NEM_regions_data, region = "NSW", x_variable = "INDEX" , y_variable = "RRP"){
   library(dplyr)
   library(ggplot2)
   Duration_Price <- data %>% 
     filter(REGION == paste0(region, "1")) %>% 
-    arrange(desc(RRP)) %>% 
-    mutate(INDEX = seq(1:length(RRP)))
+    arrange(desc(!!as.symbol(y_variable)) ) %>% 
+    group_by(REGION) %>% 
+    mutate(INDEX = seq(1:length(SETTLEMENTDATE)))
   
-  pdc <- ggplot(data = Duration_Price, aes(INDEX, RRP), ) + 
+  pdc <- ggplot(data = Duration_Price, aes_string(x = x_variable, y = y_variable), ) + 
       geom_line() +
       ggtitle( paste0("Price Duration Curve (", region, ")")) +  
       xlab("Market Interval (5 minutes)") + 
@@ -19,4 +24,4 @@ PDC <- function(data, region = "NSW1"){
   return(pdc)
 }
 regions <- c("NSW", "QLD", "VIC", "SA", "TAS")
-purrr::map(regions, ~PDC(NEM_regions_data, .x))
+purrr::map(regions, ~PDC(NEM_regions_data, .x, y_variable = "RRP"))

@@ -21,7 +21,7 @@ panelPlot <- function(data = NEM_regions_ts1, xAxis = "hour", yAxis = "Q95_MW", 
 
 NEM_regions_ts1 <- df.21_22 %>% 
   group_by(REGION, year, hour) %>% 
-  filter(month == 4 | month == 5 | month == 6) %>% 
+  filter(month == 7 | month == 8 | month == 9) %>% 
   summarise(
             P25_MW = quantile(TOTALDEMAND, 0.25),
             P50_MW = quantile(TOTALDEMAND, 0.50),
@@ -35,5 +35,10 @@ NEM_regions_ts1 <- df.21_22 %>%
             )
 
 
-panelPlot(yAxis = "P95_MW")
-panelPlot(yAxis = "P95_RRP")
+panelPlot(yAxis = "P95_MW") +
+  ylab("P95 MW") +
+  ggtitle("Operational demand for July, August & September (2021 versus 2022")
+
+panelPlot(yAxis = "P95_RRP") +
+  ylab("P95 RRP") +
+  ggtitle("Regional Reference Price for July, August & September 2021 versus 2022")
