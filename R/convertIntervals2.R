@@ -40,4 +40,7 @@ df.2021 <-loadData(file) %>% convertInterval(intervalsPerHour=2)
 file <- c("NEM_regions_2022.rds")
 df.2022 <-loadData(file) %>% convertInterval(intervalsPerHour=12)
 
-df.21_22 <- rbind(df.2021, df.2022)
+df.21_22 <- rbind(df.2021, df.2022) %>% 
+  mutate(
+    SETTLEMENTDATE = lubridate::make_datetime(year = year, month = month, day = day, hour = hour, min = 0)
+  )
