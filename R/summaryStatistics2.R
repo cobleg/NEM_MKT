@@ -4,13 +4,21 @@
 # Author: Grant Coble-Neal
 
 library(dplyr)
+library(here)
+library(stringr)
+source(here("R", "convertIntervals2.R"))
 
 SummaryStatistics <- df.21_22 %>% 
   group_by(REGION, year) %>% 
   filter(year == 2021) %>% 
+  mutate(
+    PercentChange.Price = log(AveragePrice) - log(lag(AveragePrice))
+  ) %>% 
+  mutate_all(function(x) ifelse(is.infinite(x), 0, x)) %>% 
+  replace(is.na(.), 0) %>% 
   summarise(
     PriceMean = mean(AveragePrice),
-    PriceVol = sd(AveragePrice)
+    PriceVol = sd(PercentChange.Price, na.rm = TRUE)
   )
 
 sd <- as.numeric(SummaryStatistics[SummaryStatistics$REGION == "QLD1", "PriceVol"])
