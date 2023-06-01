@@ -10,11 +10,9 @@ library(quantreg)
 library(TSstudio)
 library(tsibble)
 
-# Loading the UKgrid package to pull a multie seasonality data
-require(UKgrid)
+NEM_regions_2022 <- readRDS("~/R/NEM_MKT/data/NEM_regions_2022.rds")
 
-UKgrid_half_hour <- extract_grid(type = "xts", aggregate = NULL)
-NEM_NSW <- NEM_regions_data %>% filter(
+NEM_NSW <- NEM_regions_2022 %>% filter(
   REGION == "NSW1"
 ) %>% mutate(
   DateTime = lubridate::ymd_hms(paste(Date, Time))
@@ -49,4 +47,9 @@ ts_quantile(NEM_NSW,
 ts_quantile(NEM_NSW, 
             period = "weekdays",
             title = "NEM NSW 2022 Grid Net Demand for Electricity - by Weekdays",
+            n = 2)
+
+ts_quantile(NEM_NSW, 
+            period = "monthly",
+            title = "NEM NSW 2022 Grid Net Demand for Electricity - by month",
             n = 2)
