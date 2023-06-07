@@ -6,6 +6,7 @@
 
 library(here)
 library(tidyverse)
+library(TSstudio)
 
 NEM_regions_2022 <- readRDS("~/R/NEM_MKT/data/NEM_regions_2022.rds")
 
@@ -52,7 +53,7 @@ ts_quantile(regional.data(variable = RRP, Region = "QLD"),
             upper = 0.9,
             lower = 0,
             period = NULL, 
-            title = "NEM NSW 2022 - RRP Quantile Plot",
+            title = "NEM QLD 2022 - RRP Quantile Plot",
             Ytitle = "Regional Reference Price ($/MWh)")
 
 ts_quantile(regional.data(variable = RRP, Region = "QLD"),
