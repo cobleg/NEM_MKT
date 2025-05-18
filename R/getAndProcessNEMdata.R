@@ -1,9 +1,12 @@
 #
+# Objective: This script downloads, processes, and restructures National Electricity Market (NEM) data.
+# It fetches data from the AEMO website, cleans it, calculates summary statistics,
+# and saves the processed data as RDS files and an Excel file.
 #
-# Objective: download NEM data, restructure it, save it and export to Excel
 # Author: Grant Coble-Neal
-# Dependencies: 
-
+# Dependencies: here, purrr, stringr, tidyr, tidyverse, readr, lubridate, openxlsx
+# Ensure these packages are installed before running the script.
+# Example: install.packages(c("here", "purrr", "stringr", "tidyr", "tidyverse", "readr", "lubridate", "openxlsx"))
 
 # Load required libraries
 library(here)
@@ -85,7 +88,7 @@ save_data <- function(data, file_path) {
 }
 
 save_summary_stats <- function(df, directory, fileName = "Summary_Stats.xlsx") {
-  df %>% group_by(REGION, Series) %>% 
+  df %>% group_by(REGION, Series) %>%
     group_split() -> NEM_Summary_List
   
   blank_excel <- createWorkbook()
